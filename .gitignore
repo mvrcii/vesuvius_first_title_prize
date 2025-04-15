@@ -1,0 +1,34 @@
+# Other
+.venv
+*.DS_Store
+__pycache__
+.idea
+*.xml
+*.zarr
+data/**/datasets
+archive/checkpoints
+
+# Config
+src/conf_local.py
+
+# Logging stuff
+slurm_logs/
+wandb
+
+# Scroll specific data folder exclusion
+checkpoints/*
+datasets/*
+data/scroll*/fragments/*
+data/scroll*/fragments_contrasted/*
+data/scroll*/inference/*
+nnUNet/*
+results
+.env
+
+# Exclude .gitkeep files from being ignored
+!checkpoints/.gitkeep
+!datasets/.gitkeep
+!data/scroll*/**/.gitkeep
+.ipynb_checkpoints
+src/phoenix.egg-info/
+.run
