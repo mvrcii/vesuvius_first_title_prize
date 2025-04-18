@@ -8,7 +8,7 @@ Prerequisites:
 - **Software**: Python >= 3.8 and working conda install
 
 1. Clone the repository
-2. Download the [checkpoint](https://drive.google.com/file/d/1OTMnO7bgPQRUlzQZ2m7dd924FEwFDdQz/view?usp=drive_link) and place it in ``checkpoints/scroll5/winter-star-191-unetr-sf-b3-250414-063048-finetune``
+2. Download the [checkpoint](https://drive.google.com/file/d/1OTMnO7bgPQRUlzQZ2m7dd924FEwFDdQz/view?usp=drive_link) and place it in ``checkpoints/scroll5/warm-planet-193-unetr-sf-b3-250417-171532``
 3. Execute the following command from the root directory. This will set up the conda environment with the correct python version and install the required dependencies.
 ```
 python init_env.py
