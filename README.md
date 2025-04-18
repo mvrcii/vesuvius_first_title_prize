@@ -23,7 +23,7 @@ conda activate scroll5-title
 ./infer_title.sh
 ```
 6. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
-To reproduce the exact image we subbmitted as our main submission, run our `overlay_viewer.py` UI, and select the npy_files directory. Then select `horizontal flip`, `average` and set `boost` to `2.9`.
+To reproduce the exact image we subbmitted as our main submission, run our `scripts/overlay_viewer.py` UI, and select the results npy_files directory. Then select `horizontal flip`, `average` and set `boost` to `2.9`.
 
 # Supplementary Info
 ### Training data
