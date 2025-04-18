@@ -1,5 +1,6 @@
 # Scroll 5 Title Submission - Team Wuesuv
-<img src="https://github.com/user-attachments/assets/c9dbec4a-5a58-450f-a3e9-656d617b483a" width="500">
+
+<img src="https://github.com/user-attachments/assets/4c4596c5-343c-46bf-ae23-a1431b441cd3" width="500">
 
 ### Quickstart Inference
 Prerequisites: 
@@ -7,7 +8,7 @@ Prerequisites:
 - **Software**: Python >= 3.8 and working conda install
 
 1. Clone the repository
-2. Download the [checkpoint](https://drive.google.com/file/d/1sjHNCQyVefP_DHezvoU-fPXghcjMEWwO/view?usp=sharing) and place it in ``checkpoints/scroll5/winter-star-191-unetr-sf-b3-250414-063048-finetune``
+2. Download the [checkpoint](https://drive.google.com/file/d/1OTMnO7bgPQRUlzQZ2m7dd924FEwFDdQz/view?usp=drive_link) and place it in ``checkpoints/scroll5/winter-star-191-unetr-sf-b3-250414-063048-finetune``
 3. Execute the following command from the root directory. This will set up the conda environment with the correct python version and install the required dependencies.
 ```
 python init_env.py
@@ -21,7 +22,8 @@ conda activate scroll5-title
 ```
 ./infer_title.sh
 ```
-6. (Optional) To run inference on other chunks, simply adjust the `CHUNK_ID` in `./infer_title.sh`
+6. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
+To reproduce the exact image we subbmitted as our main submission, run our `overlay_viewer.py` UI, and select the npy_files directory. Then select `horizontal flip`, `average` and set `boost` to `2.9`.
 
 # Supplementary Info
 ### Training data
