@@ -1,6 +1,6 @@
 # Scroll 5 Title Submission - Team Wuesuv
 
-<img src="https://github.com/user-attachments/assets/4c4596c5-343c-46bf-ae23-a1431b441cd3" width="500">
+<img src="https://github.com/user-attachments/assets/b319fe5b-79c3-4eda-b13f-e6980e1854b6" width="500">
 
 ### Quickstart Inference
 Prerequisites: 
@@ -23,7 +23,7 @@ conda activate scroll5-title
 ./infer_title.sh
 ```
 6. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
-To reproduce the exact image we subbmitted as our main submission, run our `scripts/overlay_viewer.py` UI, and select the results npy_files directory. Then select `horizontal flip`, `average` and set `boost` to `2.9`.
+To reproduce the exact image we submitted, run our `scripts/overlay_viewer.py` UI, and select the resulting `npy_files` directory. Then select `horizontal flip`, `average` and set `boost` to `3` (Make sure invert colors is unchecked).
 
 # Supplementary Info
 ### Training data
