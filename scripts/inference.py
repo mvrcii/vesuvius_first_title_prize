@@ -571,7 +571,7 @@ def main():
         if "02110815/parts_contrasted/02110815_03" in args.fragment_path:
             args.crop = (0, 4500, 4500, 7500)
         elif "03192025/parts_contrasted/03192025_02" in args.fragment_path:
-            args.crop = (2700, 4630, 9100, 7730)
+            args.crop = (3200, 4630, 9300, 7730)
         else:
             raise ValueError(f"Title crop requested, but fragment path {args.fragment_path} does not have a title_crop")
 
