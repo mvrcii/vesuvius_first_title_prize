@@ -3,7 +3,7 @@
 eval "$(conda shell.bash hook)"
 conda activate scroll5-title
 
-BASE_PATH="data"
+BASE_PATH="../phoenix/data"
 FRAGMENT_ID="03192025"
 CHUNK_IDS="1,3,4,9,11,13,15,19,20,21,24,25,26,27,28,29"
 CONFIG_PATH="configs/ft_no_title.py"

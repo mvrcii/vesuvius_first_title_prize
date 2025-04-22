@@ -37,7 +37,7 @@ conda activate scroll5-title
 ```
 4. Run the following script to download the required layers, chunk and preprocess them and finally run training on the fragment chunks specified by the config. Note that we trained for 14 epochs.
 ```
-./infer_title.sh
+./train_title.sh
 ```
 
 
