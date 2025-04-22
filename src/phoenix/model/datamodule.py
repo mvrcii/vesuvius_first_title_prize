@@ -5,9 +5,10 @@ import torch
 from lightning.pytorch import LightningDataModule
 from torch.utils.data import DataLoader
 
-from phoenix.model.datasets.unetrsf_dataset import UNETR_SF_Dataset
+from phoenix.model.dataset import UNETR_SF_Dataset
 from phoenix.utility.configs import Config
-from phoenix.utility.fragments import get_frag_name_from_id
+from scripts.create_dataset import get_frag_name_from_id
+
 
 class UNETR_SF_DataModule(LightningDataModule):
     def __init__(self, cfg):
