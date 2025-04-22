@@ -18,12 +18,28 @@ python init_env.py
 conda activate scroll5-title
 ```
 
-5. Run the following script to download the required layers, preprocess them and finally run inference on the title chunk. Note that the resulting image is flipped horizontally (and must be flipped to match our submission).
+4. Run the following script to download the required layers, preprocess them and finally run inference on the title chunk. Note that the resulting image is flipped horizontally (and must be flipped to match our submission).
 ```
 ./infer_title.sh
 ```
-6. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
+5. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
 To reproduce the exact image we submitted, run our `scripts/overlay_viewer.py` UI, and select the resulting `npy_files` directory. Then select `horizontal flip`, `average` and set `boost` to `3` (Make sure invert colors is unchecked).
+
+### Quickstart Training
+1. Clone the repository
+2. Execute the following command from the root directory. This will set up the conda environment with the correct python version, install torch and all required packages, and finally installs our phoenix package.
+```
+python init_env.py
+```
+3. Activate the conda environment with
+```
+conda activate scroll5-title
+```
+4. Run the following script to download the required layers, chunk and preprocess them and finally run training on the fragment chunks specified by the config. Note that we trained for 14 epochs.
+```
+./infer_title.sh
+```
+
 
 # Supplementary Info
 ### Training data
