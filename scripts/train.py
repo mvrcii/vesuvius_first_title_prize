@@ -65,7 +65,8 @@ def get_model_run_name(config, logger):
     wandb_generated_name = logger.experiment.name
     model_run_name = f"{wandb_generated_name}-{model_name}-{timestamp}"
     logger.experiment.name = model_run_name
-    model_run_dir = os.path.join("checkpoints", model_run_name)
+    scroll_id = getattr(config, 'scroll_id', '5')
+    model_run_dir = os.path.join("checkpoints", f'scroll{str(scroll_id)}', model_run_name)
     return model_run_name, model_run_dir
 
 
