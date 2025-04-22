@@ -65,7 +65,7 @@ def get_model_run_name(config, logger):
     wandb_generated_name = logger.experiment.name
     model_run_name = f"{wandb_generated_name}-{model_name}-{timestamp}"
     logger.experiment.name = model_run_name
-    model_run_dir = os.path.join(config.work_dir, "checkpoints", model_run_name)
+    model_run_dir = os.path.join("checkpoints", model_run_name)
     return model_run_name, model_run_dir
 
 
@@ -116,7 +116,7 @@ def main(config_path, seed=42, gpu=0, checkpoint=None, resume_with_reload=False)
         model_run_name = f"{model_run_name}-finetune"
         wandb_logger.experiment.name = model_run_name
         scroll_id = getattr(config, 'scroll_id', '5')
-        model_run_dir = os.path.join(config.work_dir, "checkpoints", f'scroll{str(scroll_id)}', model_run_name)
+        model_run_dir = os.path.join("checkpoints", f'scroll{str(scroll_id)}', model_run_name)
         print(f"Fine-tuning from checkpoint: {checkpoint}")
 
     config_dict = config.to_clean_dict()

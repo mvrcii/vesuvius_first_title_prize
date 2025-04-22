@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 
 from phoenix.model.dataset import UNETR_SF_Dataset
 from phoenix.utility.configs import Config
-from scripts.create_dataset import get_frag_name_from_id
+from phoenix.utility.utils import get_frag_name_from_id
 
 
 class UNETR_SF_DataModule(LightningDataModule):

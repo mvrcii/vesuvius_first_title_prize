@@ -2,30 +2,29 @@
 
 <img src="https://github.com/user-attachments/assets/b319fe5b-79c3-4eda-b13f-e6980e1854b6" width="500">
 
-### Quickstart Inference
-Prerequisites: 
+## Prerequisites
 - **Hardware**: min. 24 GB VRAM (We used an RTX 4090), 96GB RAM, 50GB disk space
 - **Software**: Python >= 3.8 and working conda install
 
+## Quickstart - Inference
 1. Clone the repository
 2. Download the [checkpoint](https://drive.google.com/file/d/1OTMnO7bgPQRUlzQZ2m7dd924FEwFDdQz/view?usp=drive_link) and place it in ``checkpoints/scroll5/warm-planet-193-unetr-sf-b3-250417-171532``
 3. Execute the following command from the root directory. This will set up the conda environment with the correct python version and install the required dependencies.
 ```
 python init_env.py
 ```
-3. Activate the conda environment with
+4. Activate the conda environment with
 ```
 conda activate scroll5-title
 ```
-
-4. Run the following script to download the required layers, preprocess them and finally run inference on the title chunk. Note that the resulting image is flipped horizontally (and must be flipped to match our submission).
+5. Run the following script to download the required layers, preprocess them and finally run inference on the title chunk. Note that the resulting image is flipped horizontally (and must be flipped to match our submission).
 ```
 ./infer_title.sh
 ```
-5. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
+6. The results directory where the predictions will be saved will be printed to the console. It will contain 2 subdirectories. `visualizations` and `npy_files`.
 To reproduce the exact image we submitted, run our `scripts/overlay_viewer.py` UI, and select the resulting `npy_files` directory. Then select `horizontal flip`, `average` and set `boost` to `3` (Make sure invert colors is unchecked).
 
-### Quickstart Training
+## Quickstart - Training
 1. Clone the repository
 2. Execute the following command from the root directory. This will set up the conda environment with the correct python version, install torch and all required packages, and finally installs our phoenix package.
 ```
@@ -42,13 +41,14 @@ python scripts/fragment_splitter.py 03192025 --scroll-id 5 -ch 1,3,4,9,11,13,15,
 python scripts/create_dataset.py configs/ft_no_title.py --ide_is_closed
 python scripts/train.py configs/ft_no_title.py
 ```
-Some notes: 
-- We trained the submitted model for a total of 14 epochs.
+Important notes: 
+- `download_fragments.py` is as of now hardcoded for Sean's autosegmentation fragments. The script also skips existing files.
 - `fragment_splitter.py` is user-friendly as it only creates the chunks as given by the command. It skips the creation of already existing chunk files and if interrupted while processing, we continue where we left off. 
 - `create_dataset.py` is written very efficiently, meaning that it consumes almost 100% of all CPU cores. We recommend to execute it from within a console and not within an IDE as this might crash the IDE.
+- We trained the submitted model for a total of 14 epochs.
 
 
-# Supplementary Info
+## Supplementary Info
 ### Training data
 We used the following two VC3D auto-segmentations as training data: [02110815](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/02110815/) and 
 [03192025](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/03192025/).

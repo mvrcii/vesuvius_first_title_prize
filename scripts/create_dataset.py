@@ -1,7 +1,6 @@
 import argparse
 import gc
 import glob
-import json
 import logging
 import math
 import multiprocessing as mp
@@ -20,24 +19,13 @@ from tqdm import tqdm
 
 from phoenix.utility.configs import Config
 from phoenix.utility.data_validation import validate_fragments
+from phoenix.utility.utils import write_to_config, get_frag_name_from_id
 
 Image.MAX_IMAGE_PIXELS = None
 
 # Declare variables that will be initialized in main
 LABEL_INFO_LIST = None
 GLOBAL_PBAR = None
-
-
-def write_to_config(path, **kwargs):
-    os.makedirs(path, exist_ok=True)
-    path = os.path.join(path, 'config.json')
-
-    with open(path, 'w') as file:
-        json.dump(kwargs, file, indent=4)
-
-
-def get_frag_name_from_id(frag_id):
-    return str(frag_id)
 
 
 def chunk_list(input_list, num_chunks):
