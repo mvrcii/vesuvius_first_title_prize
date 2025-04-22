@@ -19,7 +19,7 @@ stride = 64
 # Trainer
 epochs = -1
 node = True
-num_workers = 0
+num_workers = 16
 seed = 7340043
 val_interval = 1
 gradient_clip_val = 1

@@ -13,10 +13,8 @@ from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.trainer import Trainer
 from lightning_fabric.accelerators import find_usable_cuda_devices
 
-from phoenix.models.data_modules.segformer_datamodule import SegFormerDataModule
-from phoenix.models.data_modules.unetrsf_datamodule import UNETR_SF_DataModule
-from phoenix.models.lightning_modules.segformer_module import SegformerModule
-from phoenix.models.lightning_modules.unetrsf_module import UNETR_SF_Module
+from phoenix.model.datamodule import UNETR_SF_DataModule
+from phoenix.model.lightning_module import UNETR_SF_Module
 from phoenix.utility.configs import Config
 
 warnings.filterwarnings("ignore", message="Some weights * were not initialized from the model checkpoint")
@@ -123,14 +121,10 @@ def main(config_path, seed=42, gpu=0, checkpoint=None, resume_with_reload=False)
 
     config_dict = config.to_clean_dict()
 
-    if config.architecture == "segformer":
-        model = SegformerModule(**config_dict)
-        data_module = SegFormerDataModule(cfg=config)
-    else:
-        model = UNETR_SF_Module(**config_dict)
-        if resume_with_reload:
-            model.load_state_dict(torch.load(checkpoint)["state_dict"])
-        data_module = UNETR_SF_DataModule(cfg=config)
+    model = UNETR_SF_Module(**config_dict)
+    if resume_with_reload:
+        model.load_state_dict(torch.load(checkpoint)["state_dict"])
+    data_module = UNETR_SF_DataModule(cfg=config)
 
     callbacks = get_callbacks(config, model_run_dir=model_run_dir)
 
@@ -157,7 +151,8 @@ def parse_args():
     parser.add_argument('--seed', type=int, default=None, help='Optional seed for the script')
     parser.add_argument('--gpu', type=int, default=0, help='Cuda GPU (default: 0)')
     parser.add_argument('--checkpoint', type=str, default=None, help='Path to checkpoint for fine-tuning')
-    parser.add_argument('--resume-with-reload', action='store_true', help='Resume training with reloading fresh optimizer and scheduler')
+    parser.add_argument('--resume-with-reload', action='store_true',
+                        help='Resume training with reloading fresh optimizer and scheduler')
     return parser.parse_args()
 
 

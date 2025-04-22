@@ -1,14 +1,14 @@
 import argparse
 import gc
 import glob
+import json
 import logging
-import os
-import shutil
-import time
 import math
+import multiprocessing as mp
+import os
+import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from functools import partial
-import multiprocessing as mp
 from multiprocessing import freeze_support
 
 import cv2
@@ -18,10 +18,8 @@ from PIL import Image
 from skimage.transform import resize
 from tqdm import tqdm
 
-from phoenix.utils.data.data_validation import validate_fragments
 from phoenix.utility.configs import Config
-from phoenix.utility.fragments import get_frag_name_from_id
-from phoenix.utils.data.utils import write_to_config
+from phoenix.utility.data_validation import validate_fragments
 
 Image.MAX_IMAGE_PIXELS = None
 
@@ -29,10 +27,24 @@ Image.MAX_IMAGE_PIXELS = None
 LABEL_INFO_LIST = None
 GLOBAL_PBAR = None
 
+
+def write_to_config(path, **kwargs):
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, 'config.json')
+
+    with open(path, 'w') as file:
+        json.dump(kwargs, file, indent=4)
+
+
+def get_frag_name_from_id(frag_id):
+    return str(frag_id)
+
+
 def chunk_list(input_list, num_chunks):
     """Split a list into evenly sized chunks"""
     chunk_size = math.ceil(len(input_list) / num_chunks)
     return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
+
 
 def process_fragments_in_chunks(config: Config, frags, only_labels, label_info_list, num_chunks=4):
     """
@@ -49,7 +61,7 @@ def process_fragments_in_chunks(config: Config, frags, only_labels, label_info_l
 
     # Process each chunk sequentially
     for chunk_idx, chunk_frags in enumerate(chunked_fragment_ids):
-        logging.info(f"Processing chunk {chunk_idx+1}/{num_chunks} with {len(chunk_frags)} fragments")
+        logging.info(f"Processing chunk {chunk_idx + 1}/{num_chunks} with {len(chunk_frags)} fragments")
 
         # Create subset of frag_id_2_channel for this chunk
         chunk_frag_id_2_channel = {frag_id: full_frag_id_2_channel[frag_id] for frag_id in chunk_frags}
@@ -71,8 +83,10 @@ def process_fragments_in_chunks(config: Config, frags, only_labels, label_info_l
                     label_size=config.label_size,
                     stride=config.stride,
                     in_chans=config.in_chans,
-                    fragment_names=[get_frag_name_from_id(frag_id).upper() for frag_id in full_frag_id_2_channel.keys()],
+                    fragment_names=[get_frag_name_from_id(frag_id).upper() for frag_id in
+                                    full_frag_id_2_channel.keys()],
                     frag_id_2_channel=full_frag_id_2_channel)
+
 
 def process_fragment_chunk(config: Config, frag_id_2_channel, only_labels, label_info_list):
     """
@@ -118,6 +132,7 @@ def process_fragment_chunk(config: Config, frag_id_2_channel, only_labels, label
     # Close progress bar
     GLOBAL_PBAR.close()
 
+
 def extract_patches(config: Config, frags, only_labels, label_info_list):
     """
     Extract patches from multiple fragments in parallel
@@ -137,6 +152,9 @@ def extract_patches(config: Config, frags, only_labels, label_info_list):
         only_labels=only_labels,
         label_info_list=label_info_list
     )
+
+    if len(frag_id_2_channel) == 0:
+        raise ValueError("No valid fragments found for processing.")
 
     # Calculate optimal number of processes
     num_processes = min(os.cpu_count(), len(frag_id_2_channel))
@@ -320,10 +338,12 @@ def create_dataset_parallel(target_dir, config: Config, frag_id, channels, only_
 
     patch_cnt, skipped_cnt, ignore_skipped_count = results
     total_patches = patch_cnt + skipped_cnt + ignore_skipped_count
-    print(f"Fragment {frag_id}: Total={total_patches} | Patches={patch_cnt} | Skipped={skipped_cnt} | Ignored={ignore_skipped_count}")
+    print(
+        f"Fragment {frag_id}: Total={total_patches} | Patches={patch_cnt} | Skipped={skipped_cnt} | Ignored={ignore_skipped_count}")
 
 
-def process_channel_stack_parallel(config: Config, target_dir, frag_id, mask, img_tensor, label_arr, ignore_arr, start_channel, only_labels, label_info_list):
+def process_channel_stack_parallel(config: Config, target_dir, frag_id, mask, img_tensor, label_arr, ignore_arr,
+                                   start_channel, only_labels, label_info_list):
     """Process channel stack with parallel patch extraction"""
     # Create patch coordinates
     x1_list = list(range(0, label_arr.shape[1] - config.patch_size + 1, config.stride))
@@ -344,7 +364,8 @@ def process_channel_stack_parallel(config: Config, target_dir, frag_id, mask, im
 
     if not only_labels:
         # Image data validation
-        if img_tensor.ndim != 3 or img_tensor.shape[0] != config.in_chans or len(img_tensor[0]) + len(img_tensor[1]) == 0:
+        if img_tensor.ndim != 3 or img_tensor.shape[0] != config.in_chans or len(img_tensor[0]) + len(
+                img_tensor[1]) == 0:
             raise ValueError(f"Expected tensor with shape ({config.in_chans}, height, width), got {img_tensor.shape}")
 
     # Create partial function with fixed arguments
@@ -377,7 +398,7 @@ def process_channel_stack_parallel(config: Config, target_dir, frag_id, mask, im
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         # Submit tasks in batches
         for i in range(0, len(coordinates), chunk_size):
-            batch = coordinates[i:i+chunk_size]
+            batch = coordinates[i:i + chunk_size]
             futures = [executor.submit(process_patch_partial, y1=y1, x1=x1,
                                        patch_counter=patch_counter,
                                        mask_skipped_counter=mask_skipped_counter,
@@ -401,7 +422,8 @@ def process_channel_stack_parallel(config: Config, target_dir, frag_id, mask, im
 
 
 def process_single_patch(config, frag_id, mask, img_tensor, label_arr, ignore_arr, start_channel, only_labels,
-                         img_dest_dir, label_dest_dir, y1, x1, patch_counter, mask_skipped_counter, ignore_skipped_counter):
+                         img_dest_dir, label_dest_dir, y1, x1, patch_counter, mask_skipped_counter,
+                         ignore_skipped_counter):
     """Process a single patch and save it to disk if valid"""
     try:
         y2 = y1 + config.patch_size
@@ -434,7 +456,8 @@ def process_single_patch(config, frag_id, mask, img_tensor, label_arr, ignore_ar
         keep_patch = np.logical_not(ignore_patch)
 
         # Check shapes
-        assert label_patch.shape == (config.patch_size, config.patch_size), f"Label patch wrong shape: {label_patch.shape}"
+        assert label_patch.shape == (config.patch_size,
+                                     config.patch_size), f"Label patch wrong shape: {label_patch.shape}"
 
         # Scale label and keep_patch patch down to label size
         label_patch = resize(label_patch, label_shape, order=0, preserve_range=True, anti_aliasing=False)
