@@ -31,14 +31,21 @@ To reproduce the exact image we submitted, run our `scripts/overlay_viewer.py` U
 ```
 python init_env.py
 ```
-3. Activate the conda environment with
+3. Activate the conda environment
 ```
 conda activate scroll5-title
 ```
-4. Run the following script to download the required layers, chunk and preprocess them and finally run training on the fragment chunks specified by the config. Note that we trained for 14 epochs.
+4. Run the following commands one by another. We download, chunk and pre-process the required fragment. Then we create the training dataset and start to train the model on the fragment chunks specified by the config. 
+```shell
+python scripts/download_fragments.py --fragment 03192025
+python scripts/fragment_splitter.py 03192025 --scroll-id 5 -ch 1,3,4,9,11,13,15,19,20,21,24,25,26,27,28,29 --contrasted
+python scripts/create_dataset.py configs/ft_no_title.py --ide_is_closed
+python scripts/train.py configs/ft_no_title.py
 ```
-./train_title.sh
-```
+Some notes: 
+- We trained the submitted model for a total of 14 epochs.
+- `fragment_splitter.py` is user-friendly as it only creates the chunks as given by the command. It skips the creation of already existing chunk files and if interrupted while processing, we continue where we left off. 
+- `create_dataset.py` is written very efficiently, meaning that it consumes almost 100% of all CPU cores. We recommend to execute it from within a console and not within an IDE as this might crash the IDE.
 
 
 # Supplementary Info
