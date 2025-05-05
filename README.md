@@ -1,6 +1,8 @@
-# Scroll 5 Title Submission - Team Wuesuv
+# Vesuvius First Title Prize
+<img src="https://github.com/user-attachments/assets/eba007fc-767f-4fce-b929-aa6ee0468039" width="500">
 
-<img src="https://github.com/user-attachments/assets/b319fe5b-79c3-4eda-b13f-e6980e1854b6" width="500">
+*Winning First Title Prize Submission by Micha Nowak and Marcel Roth* 
+
 
 ## Prerequisites
 - **Hardware**: min. 24 GB VRAM (We used an RTX 4090), 96GB RAM, 50GB disk space
