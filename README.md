@@ -1,4 +1,4 @@
-# Vesuvius First Title Prize
+# Vesuvius Challenge - First Title Prize on Scroll 5 (P.Herc 172)
 <img src="https://github.com/user-attachments/assets/eba007fc-767f-4fce-b929-aa6ee0468039" width="500">
 
 *Winning First Title Prize Submission by Micha Nowak and Marcel Roth* 
