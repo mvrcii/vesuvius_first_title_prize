@@ -3,10 +3,12 @@
 
 *Winning First Title Prize Submission by Micha Nowak and Marcel Roth* 
 
+## Method
+Our approach to extracting the title from Scroll 5 (P.Herc 172) began with informed hypotheses about its likely location. Initial experiments revealed partial title fragments that guided our subsequent efforts. The domain's inherent data limitations and the significance of even subtle ink signals led us to put a strong focus on improving data quality. This required an iterative process of extensive manual annotation, strategic masking of low-quality data, and training of our model. We adapted the [UNETR](https://arxiv.org/abs/2103.10504) architecture, which is specifically designed for 3D medical image segmentation, and created a lightweight variant we call MiniUNETR. This specific architectural design allowed us to iterate rapidly during development (1 hour to train from scratch) and ensured that our work remains accessible on limited computing resources.
 
 ## Prerequisites
-- **Hardware**: min. 24 GB VRAM (We used an RTX 4090), 96GB RAM, 50GB disk space
-- **Software**: Python >= 3.8 and working conda install
+- **Hardware**: min. 24 GB VRAM (We used an RTX 4090), 96GB RAM are recommended but not required, 50GB disk space
+- **Software**: Python >= 3.8 and a working (mini)conda installation
 
 ## Quickstart - Inference
 1. Clone the repository
@@ -55,21 +57,21 @@ Important notes:
 We used the following two VC3D auto-segmentations as training data: [02110815](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/02110815/) and 
 [03192025](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/03192025/).
 
-Our `fragment_splitter.py` script splits their large layer files into chunks with a width of 10,000 pixels and applies contrasting. We applied contrasting to all the fragment files, as we found it made it easier to visually detect very subtle ink crackles during labeling, and seemed to boost performance of our segmentation model.  
+Our model was trained on auto-segmentations of **21** layers in total, using the top 16 (index 5 to 20) as input, and therefore probably won't apply to traditional 65-layer segmentations, but we haven't tested this ablation. Note that all input data for inference **must** be contrasted with the logic implemented in our `fragment_splitter.py`.
 
-Therefore, for inference, our model also requires the **contrasted** layer files.
+Our `fragment_splitter.py` script splits your large layer files into 10,000 pixel wide chunks and applies contrast. We applied contrast to all of the fragment files because we found that it made it easier to visually detect very subtle ink crackles during annotating, and seemed to improve the performance of our segmentation model.  
+
+For this reason, our model also requires the **contrasted** layer files for the inference.
 
 
 ![contrast_compare](https://github.com/user-attachments/assets/d7e01562-6210-48e7-9e86-fa08e8da4b52)
 
-Labels were iteratively refined and cleaned over various rounds of training and inference, starting with 02110815 and continuing with 03192025. Our final labels per chunk can be found in their respective subdirectories within `data`, and each consists of two files: an ink label (`label.png`) and an ignore mask (`ignore.png`).
+### Masking
+The labels were iteratively refined and cleaned over several rounds of training and inference, starting with 02110815 and continuing with 03192025. Our final labels per chunk can be found in their respective subdirectories within `data`, and each consists of two files: an ink label (`label.png`) and an ignore mask (`ignore.png`).
 
-We use the ignore mask to mark areas where the model's predictions were uncertain in the previous run. Rather than labeling an uncertain area as ink or no-ink, we simply cover it with the ignore mask, completely removing any covered pixels from the loss calculation — thereby avoiding the propagation of incorrect labels.
+We use the ignore mask to mark areas where the model's predictions were uncertain in the previous run. Rather than marking an uncertain area as ink or no-ink, we simply cover it with the ignore mask, removing all covered pixels from the loss calculation — thus avoiding the propagation of false labels.
 
-The image below shows an example of this ignore mask. Instead of completing partial letters by hand (with ink labels that were not present in the prediction), we cover incomplete letters with the ignore mask (red) — effectively adding no label to those pixels and allowing the model to figure it out on its own.
+The image below shows an example of this ignore mask. Instead of filling in partial letters by hand (with ink labels that were not present in the prediction), we cover incomplete letters with the ignore mask (red) — effectively adding no label to those pixels and allowing the model to figure it out on its own.
 
 ![ignore_smol](https://github.com/user-attachments/assets/c336ea44-81b3-4497-853c-93353105282d)
-
-### Model General
-Our model was trained on auto-segmentations that consist of **21** layers in total, taking in the top 16 (index 5 through 20) as input, and hence likely does not translate to the traditional 65 layer segmentations, however we didn't test this ablation. Note that all input data for inference **has** to be contrasted with the logic implemented in our `fragment_splitter.py`.
 
