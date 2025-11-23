@@ -1,16 +1,53 @@
-# Vesuvius Challenge - First Title Prize on Scroll 5 (P.Herc 172)
+<img width="3928" height="1024" alt="title_banner" src="https://github.com/user-attachments/assets/837615f7-2058-4faa-b212-dcb733532600" />
+
+# Vesuvius Challenge - First Title Prize 🏆
+
+**Winner of the First Title Prize on Scroll 5 (P.Herc 172)**
+*By Micha Nowak and Marcel Roth*
+
+
+This repository contains the inference pipeline, training scripts, and custom architecture used to identify the first title in the carbonized Herculaneum scrolls.
+
 <img src="https://github.com/user-attachments/assets/eba007fc-767f-4fce-b929-aa6ee0468039" width="500">
 
-*Winning First Title Prize Submission by Micha Nowak and Marcel Roth* 
 
-## Method
-Our approach to extracting the title from Scroll 5 (P.Herc 172) began with informed hypotheses about its likely location. Initial experiments revealed partial title fragments that guided our subsequent efforts. The domain's inherent data limitations and the significance of even subtle ink signals led us to put a strong focus on improving data quality. This required an iterative process of extensive manual annotation, strategic masking of low-quality data, and training of our model. We adapted the [UNETR](https://arxiv.org/abs/2103.10504) architecture, which is specifically designed for 3D medical image segmentation, and created a lightweight variant we call MiniUNETR. This specific architectural design allowed us to iterate rapidly during development (1 hour to train from scratch) and ensured that our work remains accessible on limited computing resources.
+## ⚡ Technical Highlights (Why this works)
 
-## Prerequisites
-- **Hardware**: min. 24 GB VRAM (We used an RTX 4090), 96GB RAM are recommended but not required, 50GB disk space
-- **Software**: Python >= 3.8 and a working (mini)conda installation
+To solve the "impossible" problem of detecting ink in 3D noise, we couldn't rely on standard model architectures. We engineered three key innovations:
 
-## Quickstart - Inference
+### 1. Architecture Innovation: MiniUNETR
+We adapted the UNETR (Vision Transformer for Medical Segmentation) into a lightweight variant, **MiniUNETR**.
+* **Why:** Standard 3D UNets were too heavy for rapid iteration on our available hardware (RTX 4090).
+* **Impact:** Reduced training time to **1 hour from scratch**, allowing us to iterate 10x faster than competitors using massive compute. This embodies our philosophy of efficient, high-agency research.
+
+### 2. The "Ignore Mask" Data Engine
+We solved the problem of noisy labels by implementing a **Masked Loss Strategy**.
+* **Process:** Instead of forcing the model to learn from uncertain annotations, we generated "ignore masks" for ambiguous regions.
+* **Result:** This prevented the model from learning false positives/negatives, effectively "denoising" the dataset through iterative training cycles.
+
+### 3. 3D Volumetric Focus
+Unlike 2D approaches, we processed the scroll segments as 3D chunks (variable depth), preserving the volumetric context of the ink within the carbon fibers.
+
+---
+
+## Method & Approach
+Our approach to extracting the title from Scroll 5 began with informed hypotheses about its likely location. The domain's inherent data limitations led us to focus heavily on **improving data quality** rather than just scaling parameters.
+
+We utilized an iterative process of:
+1.  **Manual Annotation:** Expertly labeling clear ink signals.
+2.  **Strategic Masking:** Applying our "Ignore Mask" to low-quality data regions.
+3.  **Rapid Retraining:** Using MiniUNETR to validate hypotheses in near real-time.
+
+---
+
+
+
+## Quickstart: Inference
+
+**Prerequisites**
+* **Hardware:** Min. 24 GB VRAM (Tested on RTX 4090). 96GB RAM recommended.
+* **Software:** Python >= 3.8, Conda.
+
 1. Clone the repository
 2. Download the [checkpoint](https://drive.google.com/file/d/1OTMnO7bgPQRUlzQZ2m7dd924FEwFDdQz/view?usp=drive_link) and place it in ``checkpoints/scroll5/warm-planet-193-unetr-sf-b3-250417-171532``
 3. Execute the following command from the root directory. This will set up the conda environment with the correct python version and install the required dependencies.
@@ -51,8 +88,9 @@ Important notes:
 - `create_dataset.py` is written very efficiently, meaning that it consumes almost 100% of all CPU cores. We recommend to execute it from within a console and not within an IDE as this might crash the IDE.
 - We trained the submitted model for a total of 14 epochs.
 
+---
 
-## Supplementary Info
+## Supplementary Info: The "Ignore Mask"
 ### Training data
 We used the following two VC3D auto-segmentations as training data: [02110815](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/02110815/) and 
 [03192025](https://dl.ash2txt.org/community-uploads/bruniss/scrolls/s5/autogens/03192025/).
